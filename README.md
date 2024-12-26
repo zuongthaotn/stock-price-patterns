@@ -69,4 +69,4 @@ print(modeling_data[modeling_data.model != ''])
 
 
 ## More details
-check [Examples](https://github.com/zuongthaotn/stock-price-patterns/candlestick-examples.ipynb).
+check [Examples](/candlestick-examples.ipynb).
