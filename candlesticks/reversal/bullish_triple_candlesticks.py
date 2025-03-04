@@ -1,8 +1,8 @@
-from stock_price_patterns import WHITE_CS, BLACK_CS, DOJI_CS
+from stock_price_patterns.candlesticks import *
 
 
 class BullishTripleCandlestick:
-    def __init__(self, htd):
+    def __init__(self, htd, selected_patterns):
         self.child_df = htd
         self.bullish_triple_candlesticks = False
         self.morning_star = False
@@ -14,6 +14,8 @@ class BullishTripleCandlestick:
         self._current_bar = None
         self._prev_bar = None
         self._prev_2bars = None
+        #
+        self.patterns = selected_patterns
 
     def has_pattern(self):
         if len(self.child_df) < 3:
@@ -21,9 +23,14 @@ class BullishTripleCandlestick:
         self._current_bar = self.child_df.iloc[-1]
         self._prev_bar = self.child_df.iloc[-2]
         self._prev_2bars = self.child_df.iloc[-3]
-        self.__validate_morning_star_pattern()
-        self.__validate_bullish_spike_pattern()
-        self.__validate_bullish_stick_sandwich_pattern()
+        if MORNING_STAR in self.patterns or MORNING_DOJI_STAR in self.patterns \
+                or BULLISH_ABANDONED_BABY in self.patterns \
+                or GET_REVERSAL in self.patterns or GET_FULL in self.patterns:
+            self.__validate_morning_star_pattern()
+        if BULLISH_SPIKE in self.patterns or GET_REVERSAL in self.patterns or GET_FULL in self.patterns:
+            self.__validate_bullish_spike_pattern()
+        if BULLISH_STICK_SANDWICH in self.patterns or GET_REVERSAL in self.patterns or GET_FULL in self.patterns:
+            self.__validate_bullish_stick_sandwich_pattern()
         return self.bullish_triple_candlesticks
 
     def __validate_morning_star_pattern(self):
@@ -42,9 +49,16 @@ class BullishTripleCandlestick:
                 and self._prev_bar['max_OC'] <= self._current_bar['min_OC']):
             return False
         self.bullish_triple_candlesticks = True
+        if MORNING_DOJI_STAR in self.patterns \
+                or BULLISH_ABANDONED_BABY in self.patterns \
+                or GET_REVERSAL in self.patterns or GET_FULL in self.patterns:
+            self.__validate_morning_doji_star_pattern()
+        if BULLISH_ABANDONED_BABY in self.patterns \
+                or GET_REVERSAL in self.patterns or GET_FULL in self.patterns:
+            self.__validate_bullish_abandoned_baby_pattern()
+        if MORNING_STAR not in self.patterns or GET_REVERSAL not in self.patterns or GET_FULL not in self.patterns:
+            return False
         self.morning_star = True
-        self.__validate_morning_doji_star_pattern()
-        self.__validate_bullish_abandoned_baby_pattern()
         return True
 
     def __validate_morning_doji_star_pattern(self):

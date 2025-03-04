@@ -78,29 +78,34 @@ class CandlestickPatterns:
     def get_reversal_cs_pattern(self, child_df):
         pattern = []
         #
+        selected_bullish_patterns = list(filter(lambda p: 'rising' in p or 'morning' in p or 'bullish' in p
+                                                          or GET_REVERSAL in p or GET_FULL in p, self.added_patterns))
+        selected_bearish_patterns = list(filter(lambda p: 'falling' in p or 'evening' in p or 'bearish' in p
+                                                          or GET_REVERSAL in p or GET_FULL in p, self.added_patterns))
+        #
         """" Triple candlesticks """
-        # bull_tc = BullishTripleCandlestick(child_df)
-        # if bull_tc.has_pattern():
-        #     if bull_tc.is_morning_star():
-        #         if bull_tc.is_bullish_abandoned_baby():
-        #             pattern.append('is_bullish_abandoned_baby')
-        #         elif bull_tc.is_morning_doji_star():
-        #             pattern.append('is_morning_doji_star')
-        #         else:
-        #             pattern.append('is_morning_star')
-        #     elif bull_tc.is_bullish_spike():
-        #         pattern.append('bullish_spike')
-        #     elif bull_tc.is_bullish_stick_sandwich():
-        #         pattern.append('bullish_stick_sandwich')
-        # else:
-        #     bear_tc = BearishTripleCandlestick(child_df)
-        #     if bear_tc.has_pattern():
-        #         pattern.append('')
+        if len(selected_bullish_patterns):
+            bull_tc = BullishTripleCandlestick(child_df, selected_bullish_patterns)
+            if bull_tc.has_pattern():
+                if bull_tc.is_morning_star():
+                    if bull_tc.is_bullish_abandoned_baby():
+                        pattern.append('is_bullish_abandoned_baby')
+                    elif bull_tc.is_morning_doji_star():
+                        pattern.append('is_morning_doji_star')
+                    else:
+                        pattern.append('is_morning_star')
+                elif bull_tc.is_bullish_spike():
+                    pattern.append('bullish_spike')
+                elif bull_tc.is_bullish_stick_sandwich():
+                    pattern.append('bullish_stick_sandwich')
+        #
+        if len(selected_bearish_patterns):
+            bear_tc = BearishTripleCandlestick(child_df, selected_bearish_patterns)
+            if bear_tc.has_pattern():
+                pattern.append('')
         # #
         #
         """" Couple candlesticks """
-        selected_bullish_patterns = list(filter(lambda p: 'rising' in p or 'morning' in p or 'bullish' in p
-                                                          or GET_REVERSAL in p or GET_FULL in p, self.added_patterns))
         if len(selected_bullish_patterns):
             bull_dc = BullishDoubleCandlestick(child_df, selected_bullish_patterns)
             if bull_dc.has_pattern():
@@ -121,9 +126,7 @@ class CandlestickPatterns:
                     pattern.append('bullish_matching_low')
                 elif bull_dc.is_tweezers_bottom():
                     pattern.append('bullish_tweezers_bottom')
-
-        selected_bearish_patterns = list(filter(lambda p: 'falling' in p or 'evening' in p or 'bearish' in p
-                                                          or GET_REVERSAL in p or GET_FULL in p, self.added_patterns))
+        #
         if len(selected_bearish_patterns):
             bear_dc = BearishDoubleCandlestick(child_df, selected_bearish_patterns)
             if bear_dc.has_pattern():
