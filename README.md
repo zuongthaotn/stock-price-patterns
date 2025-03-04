@@ -41,7 +41,7 @@ Stock Price Pattern Modeling(Detection)
 import pandas as pd
 import os
 from pathlib import Path
-from candlestick import CandlestickPatterns
+from stock_price_patterns.candlestick import CandlestickPatterns
 notebook_path = os.getcwd()
 current_dir = Path(notebook_path)
 csv_file = str(current_dir) + '/VN30F1M_5minutes.csv'
@@ -53,6 +53,7 @@ else:
     print("File not found")
     exit()
 csp = CandlestickPatterns(dataset)
+csp._add('reversal')
 modeling_data = csp.pattern_modeling()
 print(modeling_data[modeling_data.model != ''])
 ```
