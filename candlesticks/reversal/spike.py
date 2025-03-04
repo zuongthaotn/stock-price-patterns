@@ -1,4 +1,4 @@
-from candlesticks import WHITE_CS, BLACK_CS, DOJI_CS
+from stock_price_patterns import WHITE_CS, BLACK_CS, DOJI_CS
 
 
 def is_bullish_spike(htd):

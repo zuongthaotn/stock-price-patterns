@@ -1,4 +1,4 @@
-from candlesticks import WHITE_CS, BLACK_CS
+from stock_price_patterns import WHITE_CS, BLACK_CS
 
 
 def is_bullish_gap(htd):

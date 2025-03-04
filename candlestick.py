@@ -1,17 +1,17 @@
-from candlesticks.continuation.gap import is_bullish_gap, is_bearish_gap
-from candlesticks.continuation.neck import is_bullish_neck, is_bearish_neck
-from candlesticks.continuation.fair_value_gap import is_fair_value_rising_gap, is_fair_value_falling_gap
-from candlesticks.continuation.three_methods import is_rising_three, is_falling_three
-from candlesticks.continuation.separating_line import is_bullish_separating_line, is_bearish_separating_line
-from candlesticks.continuation.four_bars_made_n import is_rising_n, is_falling_n
+from .candlesticks.continuation.gap import is_bullish_gap, is_bearish_gap
+from .candlesticks.continuation.neck import is_bullish_neck, is_bearish_neck
+from .candlesticks.continuation.fair_value_gap import is_fair_value_rising_gap, is_fair_value_falling_gap
+from .candlesticks.continuation.three_methods import is_rising_three, is_falling_three
+from .candlesticks.continuation.separating_line import is_bullish_separating_line, is_bearish_separating_line
+from .candlesticks.continuation.four_bars_made_n import is_rising_n, is_falling_n
 #
-from candlesticks.reversal.bullish_double_candlesticks import BullishDoubleCandlestick
-from candlesticks.reversal.bearish_double_candlesticks import BearishDoubleCandlestick
-from candlesticks.reversal.bullish_triple_candlesticks import BullishTripleCandlestick
-from candlesticks.reversal.bearish_triple_candlesticks import BearishTripleCandlestick
-from candlesticks import ALLOWED_PATTERNS
-from candlesticks import WHITE_CS, BLACK_CS, DOJI_CS, MARUBOZU_CS, HANGING_MAN_CS
-from candlesticks import SHOOTING_STAR_CS, SPINNING_TOP_CS, HAMMER_CS, INVERTED_HAMMER_CS
+from .candlesticks.reversal.bullish_double_candlesticks import BullishDoubleCandlestick
+from .candlesticks.reversal.bearish_double_candlesticks import BearishDoubleCandlestick
+from .candlesticks.reversal.bullish_triple_candlesticks import BullishTripleCandlestick
+from .candlesticks.reversal.bearish_triple_candlesticks import BearishTripleCandlestick
+from .candlesticks import ALLOWED_PATTERNS
+from .candlesticks import WHITE_CS, BLACK_CS, DOJI_CS, MARUBOZU_CS, HANGING_MAN_CS
+from .candlesticks import SHOOTING_STAR_CS, SPINNING_TOP_CS, HAMMER_CS, INVERTED_HAMMER_CS
 
 
 class CandlestickPatterns:
