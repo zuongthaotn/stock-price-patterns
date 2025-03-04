@@ -1,8 +1,8 @@
-from stock_price_patterns import WHITE_CS, BLACK_CS, DOJI_CS
+from stock_price_patterns.candlesticks import *
 
 
 class BearishDoubleCandlestick:
-    def __init__(self, htd):
+    def __init__(self, htd, selected_patterns):
         self.child_df = htd
         self.bearish_double_candlesticks = False
         self.bearish_engulfing = False
@@ -16,6 +16,8 @@ class BearishDoubleCandlestick:
         #
         self._current_bar = None
         self._prev_bar = None
+        #
+        self.patterns = selected_patterns
 
     def is_bearish_engulfing(self):
         return self.bearish_engulfing
@@ -49,7 +51,8 @@ class BearishDoubleCandlestick:
         if self._current_bar['Low'] == self._current_bar['High'] or self._prev_bar['Low'] == self._prev_bar['High']:
             return False
         self.__validate_bearish_engulfing_pattern()
-        self.__validate_matching_high_pattern()
+        if BEARISH_MATCHING_HIGH in self.patterns or GET_REVERSAL in self.patterns or GET_FULL in self.patterns:
+            self.__validate_matching_high_pattern()
         return self.bearish_double_candlesticks
 
     def __validate_matching_high_pattern(self):
@@ -82,10 +85,17 @@ class BearishDoubleCandlestick:
         """
         if not (self._current_bar['color'] == BLACK_CS and self._prev_bar['color'] == WHITE_CS):
             return False
-        self.__validate_tweezers_top_pattern()
-        self.__validate_bearish_harami_pattern()
-        self.__validate_dark_cloud_cover_pattern()
-        self.__validate_tasuki_line_pattern()
+        if BEARISH_TWEEZERS_TOP in self.patterns or GET_REVERSAL in self.patterns or GET_FULL in self.patterns:
+            self.__validate_tweezers_top_pattern()
+        if BEARISH_HARAMI in self.patterns or GET_REVERSAL in self.patterns or GET_FULL in self.patterns or \
+                BEARISH_HARAMI_CROSS in self.patterns or GET_REVERSAL in self.patterns or GET_FULL in self.patterns:
+            self.__validate_bearish_harami_pattern()
+        if BEARISH_DARK_CLOUD_COVER in self.patterns or GET_REVERSAL in self.patterns or GET_FULL in self.patterns:
+            self.__validate_dark_cloud_cover_pattern()
+        if BEARISH_TASUKI_LINE in self.patterns or GET_REVERSAL in self.patterns or GET_FULL in self.patterns:
+            self.__validate_tasuki_line_pattern()
+        if BEARISH_ENGULFING not in self.patterns or GET_REVERSAL not in self.patterns or GET_FULL not in self.patterns:
+            return False
         """
         Conditions:
             1. current_max_oc >= prev_bar_max_oc
@@ -123,14 +133,15 @@ class BearishDoubleCandlestick:
         return True
 
     def __validate_dark_cloud_cover_pattern(self):
-        self.__validate_meeting_line_pattern()
+        if BEARISH_MEETING_LINE in self.patterns or GET_REVERSAL in self.patterns or GET_FULL in self.patterns:
+            self.__validate_meeting_line_pattern()
         """
         Conditions:
-            1. current_open > prev_bar_close
+            1. current_open > prev_bar_close < current_close
             2. current_close <= (prev_bar_open + prev_bar_close) / 2
         """
         if not (self._current_bar['Open'] > self._prev_bar['Close']
-                and self._current_bar['Close'] <= (self._prev_bar['Open'] + self._prev_bar['Close'])/2):
+                and self._prev_bar['Open'] < self._current_bar['Close'] <= (self._prev_bar['Open'] + self._prev_bar['Close']) / 2):
             return False
         self.dark_cloud_cover = True
         self.bearish_double_candlesticks = True
@@ -164,7 +175,8 @@ class BearishDoubleCandlestick:
         """
         if not self._prev_bar['body'] >= 2 * self._current_bar['body']:
             return False
-        self.__validate_bearish_harami_cross_pattern()
+        if BEARISH_HARAMI_CROSS in self.patterns or GET_REVERSAL in self.patterns or GET_FULL in self.patterns:
+            self.__validate_bearish_harami_cross_pattern()
         self.bearish_harami = True
         self.bearish_double_candlesticks = True
         return True

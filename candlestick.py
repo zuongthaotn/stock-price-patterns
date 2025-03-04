@@ -9,7 +9,7 @@ from .candlesticks.reversal.bullish_double_candlesticks import BullishDoubleCand
 from .candlesticks.reversal.bearish_double_candlesticks import BearishDoubleCandlestick
 from .candlesticks.reversal.bullish_triple_candlesticks import BullishTripleCandlestick
 from .candlesticks.reversal.bearish_triple_candlesticks import BearishTripleCandlestick
-from .candlesticks import ALLOWED_PATTERNS, GET_FULL, GET_CONTINUE, GET_REVERSAL
+from .candlesticks import *
 from .candlesticks import WHITE_CS, BLACK_CS, DOJI_CS, MARUBOZU_CS, HANGING_MAN_CS
 from .candlesticks import SHOOTING_STAR_CS, SPINNING_TOP_CS, HAMMER_CS, INVERTED_HAMMER_CS
 
@@ -75,32 +75,34 @@ class CandlestickPatterns:
         htd['candlestick'] = htd.apply(lambda r: self.get_candlestick(r), axis=1)
         return htd
 
-    @staticmethod
-    def get_reversal_cs_pattern(child_df, get_full=True):
+    def get_reversal_cs_pattern(self, child_df):
         pattern = []
         #
         """" Triple candlesticks """
-        bull_tc = BullishTripleCandlestick(child_df)
-        if bull_tc.has_pattern():
-            if bull_tc.is_morning_star():
-                if bull_tc.is_bullish_abandoned_baby():
-                    pattern.append('is_bullish_abandoned_baby')
-                elif bull_tc.is_morning_doji_star():
-                    pattern.append('is_morning_doji_star')
-                else:
-                    pattern.append('is_morning_star')
-            elif bull_tc.is_bullish_spike():
-                pattern.append('bullish_spike')
-            elif bull_tc.is_bullish_stick_sandwich():
-                pattern.append('bullish_stick_sandwich')
-        else:
-            bear_tc = BearishTripleCandlestick(child_df)
-            if bear_tc.has_pattern():
-                pattern.append('')
+        # bull_tc = BullishTripleCandlestick(child_df)
+        # if bull_tc.has_pattern():
+        #     if bull_tc.is_morning_star():
+        #         if bull_tc.is_bullish_abandoned_baby():
+        #             pattern.append('is_bullish_abandoned_baby')
+        #         elif bull_tc.is_morning_doji_star():
+        #             pattern.append('is_morning_doji_star')
+        #         else:
+        #             pattern.append('is_morning_star')
+        #     elif bull_tc.is_bullish_spike():
+        #         pattern.append('bullish_spike')
+        #     elif bull_tc.is_bullish_stick_sandwich():
+        #         pattern.append('bullish_stick_sandwich')
+        # else:
+        #     bear_tc = BearishTripleCandlestick(child_df)
+        #     if bear_tc.has_pattern():
+        #         pattern.append('')
+        # #
         #
-        if not len(pattern):
-            """" Couple candlesticks """
-            bull_dc = BullishDoubleCandlestick(child_df)
+        """" Couple candlesticks """
+        selected_bullish_patterns = list(filter(lambda p: 'rising' in p or 'morning' in p or 'bullish' in p
+                                                          or GET_REVERSAL in p or GET_FULL in p, self.added_patterns))
+        if len(selected_bullish_patterns):
+            bull_dc = BullishDoubleCandlestick(child_df, selected_bullish_patterns)
             if bull_dc.has_pattern():
                 if bull_dc.is_bullish_engulfing():
                     pattern.append('bullish_engulfing')
@@ -119,62 +121,76 @@ class CandlestickPatterns:
                     pattern.append('bullish_matching_low')
                 elif bull_dc.is_tweezers_bottom():
                     pattern.append('bullish_tweezers_bottom')
-            else:
-                bear_dc = BearishDoubleCandlestick(child_df)
-                if bear_dc.has_pattern():
-                    if bear_dc.is_bearish_engulfing():
-                        pattern.append('bearish_engulfing')
-                    elif bear_dc.is_dark_cloud_cover():
-                        pattern.append('bearish_dark_cloud_cover')
-                    elif bear_dc.is_bearish_harami():
-                        if bear_dc.is_bearish_harami_cross():
-                            pattern.append('bearish_harami_cross')
-                        else:
-                            pattern.append('bearish_harami')
-                    elif bear_dc.is_bearish_meeting_line():
-                        pattern.append('bearish_meeting_line')
-                    elif bear_dc.is_bearish_tasuki_line():
-                        pattern.append('bearish_tasuki_line')
-                    elif bear_dc.is_matching_high():
-                        pattern.append('bearish_matching_low')
-                    elif bear_dc.is_tweezers_top():
-                        pattern.append('bearish_tweezers_top')
+
+        selected_bearish_patterns = list(filter(lambda p: 'falling' in p or 'evening' in p or 'bearish' in p
+                                                          or GET_REVERSAL in p or GET_FULL in p, self.added_patterns))
+        if len(selected_bearish_patterns):
+            bear_dc = BearishDoubleCandlestick(child_df, selected_bearish_patterns)
+            if bear_dc.has_pattern():
+                if bear_dc.is_bearish_engulfing():
+                    pattern.append('bearish_engulfing')
+                elif bear_dc.is_dark_cloud_cover():
+                    pattern.append('bearish_dark_cloud_cover')
+                elif bear_dc.is_bearish_harami():
+                    if bear_dc.is_bearish_harami_cross():
+                        pattern.append('bearish_harami_cross')
+                    else:
+                        pattern.append('bearish_harami')
+                elif bear_dc.is_bearish_meeting_line():
+                    pattern.append('bearish_meeting_line')
+                elif bear_dc.is_bearish_tasuki_line():
+                    pattern.append('bearish_tasuki_line')
+                elif bear_dc.is_matching_high():
+                    pattern.append('bearish_matching_low')
+                elif bear_dc.is_tweezers_top():
+                    pattern.append('bearish_tweezers_top')
             #
         #
         return pattern
 
-    @staticmethod
-    def get_continuation_cs_pattern(child_df):
+    def get_continuation_cs_pattern(self, child_df):
         pattern = []
-        if is_bullish_gap(child_df):
-            pattern.append('bullish_gap')
-        elif is_bearish_gap(child_df):
-            pattern.append('bearish_gap')
+        if BULLISH_GAP in self.added_patterns or BEARISH_GAP in self.added_patterns \
+                or GET_CONTINUE in self.added_patterns or GET_FULL in self.added_patterns:
+            if is_bullish_gap(child_df):
+                pattern.append('bullish_gap')
+            elif is_bearish_gap(child_df):
+                pattern.append('bearish_gap')
         #
-        if is_bullish_neck(child_df):
-            pattern.append('bullish_neck')
-        elif is_bearish_neck(child_df):
-            pattern.append('bearish_neck')
+        if BULLISH_NECK in self.added_patterns or BEARISH_NECK in self.added_patterns \
+                or GET_CONTINUE in self.added_patterns or GET_FULL in self.added_patterns:
+            if is_bullish_neck(child_df):
+                pattern.append('bullish_neck')
+            elif is_bearish_neck(child_df):
+                pattern.append('bearish_neck')
         #
-        if is_fair_value_rising_gap(child_df):
-            pattern.append('fair_value_rising_gap')
-        elif is_fair_value_falling_gap(child_df):
-            pattern.append('fair_value_falling_gap')
+        if FAIR_VALUE_RISING_GAP in self.added_patterns or FAIR_VALUE_FALLING_GAP in self.added_patterns \
+                or GET_CONTINUE in self.added_patterns or GET_FULL in self.added_patterns:
+            if is_fair_value_rising_gap(child_df):
+                pattern.append('fair_value_rising_gap')
+            elif is_fair_value_falling_gap(child_df):
+                pattern.append('fair_value_falling_gap')
         #
-        if is_bullish_separating_line(child_df):
-            pattern.append('bullish_separating_line')
-        elif is_bearish_separating_line(child_df):
-            pattern.append('bearish_separating_line')
+        if BULLISH_SEPARATING_LINE in self.added_patterns or BEARISH_SEPARATING_LINE in self.added_patterns \
+                or GET_CONTINUE in self.added_patterns or GET_FULL in self.added_patterns:
+            if is_bullish_separating_line(child_df):
+                pattern.append('bullish_separating_line')
+            elif is_bearish_separating_line(child_df):
+                pattern.append('bearish_separating_line')
         #
-        if is_rising_three(child_df):
-            pattern.append('rising_three')
-        elif is_falling_three(child_df):
-            pattern.append('falling_three')
+        if RISING_THREE in self.added_patterns or FALLING_THREE in self.added_patterns \
+                or GET_CONTINUE in self.added_patterns or GET_FULL in self.added_patterns:
+            if is_rising_three(child_df):
+                pattern.append('rising_three')
+            elif is_falling_three(child_df):
+                pattern.append('falling_three')
         #
-        if is_rising_n(child_df):
-            pattern.append('rising_n')
-        elif is_falling_n(child_df):
-            pattern.append('falling_n')
+        if RISING_N in self.added_patterns or FALLING_N in self.added_patterns \
+                or GET_CONTINUE in self.added_patterns or GET_FULL in self.added_patterns:
+            if is_rising_n(child_df):
+                pattern.append('rising_n')
+            elif is_falling_n(child_df):
+                pattern.append('falling_n')
         #
         return pattern
 
@@ -214,11 +230,15 @@ class CandlestickPatterns:
         if pattern_name not in ALLOWED_PATTERNS:
             print(f"The pattern {pattern_name} is not recognized.")
             exit()
-        if (pattern_name == GET_FULL and len(self.added_patterns))  or GET_FULL in self.added_patterns:
+        if pattern_name in self.added_patterns:
+            print(f"The pattern {pattern_name} is already added.")
+            exit()
+        if (pattern_name == GET_FULL and len(self.added_patterns)) or GET_FULL in self.added_patterns:
             print(f"You can not add {GET_FULL} if you added some others. Just use only {GET_FULL}.")
             exit()
         if (pattern_name == GET_REVERSAL or pattern_name == GET_CONTINUE or pattern_name == GET_FULL) and \
-            (GET_REVERSAL in self.added_patterns or GET_CONTINUE in self.added_patterns or
-             GET_FULL in self.added_patterns):
-            print(f"You can not add {GET_REVERSAL} & {GET_CONTINUE} & {GET_FULL} together. Just use {GET_FULL} instead.")
+                (GET_REVERSAL in self.added_patterns or GET_CONTINUE in self.added_patterns or
+                 GET_FULL in self.added_patterns):
+            print(
+                f"You can not add {GET_REVERSAL} & {GET_CONTINUE} & {GET_FULL} together. Just use {GET_FULL} instead.")
             exit()

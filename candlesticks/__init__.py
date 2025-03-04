@@ -16,7 +16,7 @@ GET_REVERSAL = 'reversal'
 GET_CONTINUE = 'continue'
 #
 MORNING_STAR = 'morning star'
-BULLISH_ABANDON_BABY = 'bullish abandoned baby'
+BULLISH_ABANDONED_BABY = 'bullish abandoned baby'
 MORNING_DOJI_STAR = 'morning doji star'
 BULLISH_SPIKE = 'bullish spike'
 STICK_SANDWICH = 'stick sandwich'
@@ -35,18 +35,35 @@ BULLISH_TASUKI_LINE = 'bullish tasuki line'
 BULLISH_MATCHING_LOW = 'bullish matching low'
 BULLISH_TWEEZERS_BOTTOM = 'bullish_tweezers_bottom'
 #
-MORNING_STAR = 'morning star'
-BULLISH_ABANDON_BABY = 'bullish abandoned baby'
-MORNING_DOJI_STAR = 'morning doji star'
-BULLISH_SPIKE = 'bullish spike'
-STICK_SANDWICH = 'stick sandwich'
-BULLISH_GAP = 'bullish gap'
-BULLISH_NECK = 'bullish neck'
-FAIR_VALUE_RISING_GAP = 'fair value rising gap'
-BULLISH_SEPARATING_LINE = 'bullish separating line'
-RISING_THREE = 'rising_three'
-RISING_N = 'rising_n'
+BEARISH_ENGULFING = 'bearish engulfing'
+BEARISH_DARK_CLOUD_COVER = 'bearish dark cloud cover'
+BEARISH_HARAMI_CROSS = 'bearish harami cross'
+BEARISH_HARAMI = 'bearish harami'
+BEARISH_MEETING_LINE = 'bearish meeting line'
+BEARISH_TASUKI_LINE = 'bearish tasuki line'
+BEARISH_MATCHING_HIGH = 'bearish matching high'
+BEARISH_TWEEZERS_TOP = 'bearish tweezers top'
+EVENING_STAR = 'evening star'
+EVENING_DOJI_STAR = 'evening doji star'
+BEARISH_ABANDONED_BABY = 'bearish abandoned baby'
+BEARISH_SPIKE = 'bearish spike'
+BEARISH_STICK_SANDWICH = 'bearish stick sandwich'
+BEARISH_GAP = 'bearish gap'
+BEARISH_NECK = 'bearish neck'
+FAIR_VALUE_FALLING_GAP = 'fair value falling gap'
+BEARISH_SEPARATING_LINE = 'bearish separating line'
+FALLING_THREE = 'falling three'
+FALLING_N = 'falling n'
 #
 ALLOWED_PATTERNS = [GET_FULL, GET_REVERSAL, GET_CONTINUE,
-                    MORNING_STAR, BULLISH_ABANDON_BABY]
+                    MORNING_STAR, BULLISH_ABANDONED_BABY, MORNING_DOJI_STAR, BULLISH_SPIKE, STICK_SANDWICH, BULLISH_GAP,
+                    BULLISH_NECK, FAIR_VALUE_RISING_GAP, BULLISH_SEPARATING_LINE, RISING_THREE, RISING_N,
+                    BULLISH_ENGULFING, BULLISH_PIERCING, BULLISH_HARAMI_CROSS, BULLISH_HARAMI, BULLISH_MEETING_LINE,
+                    BULLISH_TASUKI_LINE, BULLISH_MATCHING_LOW, BULLISH_TWEEZERS_BOTTOM,
+                    EVENING_STAR, BEARISH_ABANDONED_BABY, EVENING_DOJI_STAR, BEARISH_SPIKE, BEARISH_STICK_SANDWICH,
+                    BEARISH_GAP,
+                    BEARISH_NECK, FAIR_VALUE_FALLING_GAP, BEARISH_SEPARATING_LINE, RISING_THREE, RISING_N,
+                    BEARISH_ENGULFING, BEARISH_DARK_CLOUD_COVER, BEARISH_HARAMI_CROSS, BEARISH_HARAMI, BEARISH_MEETING_LINE,
+                    BEARISH_TASUKI_LINE, BEARISH_MATCHING_HIGH, BEARISH_TWEEZERS_TOP
+                    ]
 #
