@@ -9,7 +9,7 @@ from .candlesticks.reversal.bullish_double_candlesticks import BullishDoubleCand
 from .candlesticks.reversal.bearish_double_candlesticks import BearishDoubleCandlestick
 from .candlesticks.reversal.bullish_triple_candlesticks import BullishTripleCandlestick
 from .candlesticks.reversal.bearish_triple_candlesticks import BearishTripleCandlestick
-from .candlesticks import ALLOWED_PATTERNS
+from .candlesticks import ALLOWED_PATTERNS, GET_FULL, GET_CONTINUE, GET_REVERSAL
 from .candlesticks import WHITE_CS, BLACK_CS, DOJI_CS, MARUBOZU_CS, HANGING_MAN_CS
 from .candlesticks import SHOOTING_STAR_CS, SPINNING_TOP_CS, HAMMER_CS, INVERTED_HAMMER_CS
 
@@ -25,6 +25,10 @@ class CandlestickPatterns:
 
     def pattern_modeling(self):
         prepared_data = self.prepare_data(self.working_data)
+        if not len(self.added_patterns):
+            prepared_data['model'] = ''
+            return prepared_data
+        #
         data_len = len(prepared_data)
         models = []
         for i in range(0, data_len):
@@ -35,7 +39,15 @@ class CandlestickPatterns:
             _end = i + 1
             #
             working_htd = prepared_data.iloc[_start: _end]
-            model = self.get_full_candlestick_pattern(working_htd)
+            if len(self.added_patterns) == 1:
+                if GET_CONTINUE in self.added_patterns:
+                    model = self.get_continuation_cs_pattern(working_htd)
+                elif GET_REVERSAL in self.added_patterns:
+                    model = self.get_reversal_cs_pattern(working_htd)
+                else:
+                    model = self.get_full_candlestick_pattern(working_htd)
+            else:
+                model = self.get_full_candlestick_pattern(working_htd)
             #
             if len(model):
                 model = ', '.join(model)
@@ -64,7 +76,7 @@ class CandlestickPatterns:
         return htd
 
     @staticmethod
-    def get_reversal_cs_pattern(child_df):
+    def get_reversal_cs_pattern(child_df, get_full=True):
         pattern = []
         #
         """" Triple candlesticks """
@@ -175,6 +187,10 @@ class CandlestickPatterns:
         return pattern
 
     @staticmethod
+    def get_supported_patterns():
+        return ALLOWED_PATTERNS
+
+    @staticmethod
     def get_candlestick(r):
         if r['Low'] == r['High']:
             return ''
@@ -194,8 +210,15 @@ class CandlestickPatterns:
             return SPINNING_TOP_CS
         return ''
 
-    @staticmethod
-    def __validate(pattern_name):
+    def __validate(self, pattern_name):
         if pattern_name not in ALLOWED_PATTERNS:
             print(f"The pattern {pattern_name} is not recognized.")
+            exit()
+        if (pattern_name == GET_FULL and len(self.added_patterns))  or GET_FULL in self.added_patterns:
+            print(f"You can not add {GET_FULL} if you added some others. Just use only {GET_FULL}.")
+            exit()
+        if (pattern_name == GET_REVERSAL or pattern_name == GET_CONTINUE or pattern_name == GET_FULL) and \
+            (GET_REVERSAL in self.added_patterns or GET_CONTINUE in self.added_patterns or
+             GET_FULL in self.added_patterns):
+            print(f"You can not add {GET_REVERSAL} & {GET_CONTINUE} & {GET_FULL} together. Just use {GET_FULL} instead.")
             exit()
